@@ -1,0 +1,22 @@
+== olddog
+
+// TODO move into b44
+~ state.dialogue("thoughtbubble");
+My parents warned me when I moved into this apartment that I'd be in a bad neighborhood. That didn't make sense to me. The building was so nice!
+The thing I realized is that the businesshumans who made the building didn't really understand the concept of home. And they didn't care that their big expensive building for rich people was going up right next to the dog park.
+It gets so sad walking these streets to get to my luxury apartment and seeing old, stray dogs everywhere. Shouldn't this building be for them? There are literally dozens of empty beds inside.
+// TODO walk a dog and talk mental health
+~ state.dialogue("");
+~ state.dialogue("you");
+Just because you feel crummy right now doesn't mean you lived every day this week making the wrong decisions! At least some of those choices were the right ones. Sometimes days are just bad and it's not our fault. I promise.
+
+// TODO it's broken later
+// TODO friends back home went drinking without me. When is this city gonna feel right?
+
+~ state.dialogue("thoughtbubble");
+This city's going to eat me alive.
+
+// The end
+THE END
+* Credits
+- 

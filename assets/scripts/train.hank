@@ -1,0 +1,97 @@
+== train
+
+~var gender = ""
+~ state.playerSprite = "kid";
+
+~ state.background.add(state.ingrid_sprite);
+~ state.dialogue("Ingrid"); // Ingrid is an anthropomorphic goat grandma
+Oh my, another youngster on your way to the city!
+// TODO show the train background and Ingrid
+I see a lot of kids on this train nowadays.
+* {DEBUG} SKIP TO BROWNSTONE
+    ~ gender = "insert gender here";
+    -> apartment
+* Glad I'm not the only one.
+* (misspeciated) I'm not a kid.
+    Oh, right. Little ones, I mean. I can see you're not a kid, you're a growing young...
+    ** Pup[].
+        ~ state.playerSprite = "puppy";
+    ** Kitten[].
+        ~ state.playerSprite = "kitty";
+- ~ state.showPlayerSprite();
+Younger every year--and never as prepared as they should be! This city can eat a {state.playerSprite} alive; I've seen it happen.
+You know, {if (misspeciated > 0) "I'm more hip to youth culture than I look" else "I learn a lot by sitting next to kids like you"}. For instance, I know you can't tell a {state.playerSprite}'s gender just by looking anymore.
+I bet if you answer a few questions for me, I can guess yours!
+* Um, sure.
+* What? That's none of your business.
+    So it's "none of your business"? Way to spoil the fun.
+    ~ gender = "none of your business";
+    -> stop
+    
+-    
+```
+var charm = 2;
+var virtue = 4;
+var gender_matrix = [
+/*  evil */ ['goth', 'double helix', 'a social construct', 'Spike Jonze fan', 'spiders'],
+/*   |   */ ['Elizabethan actor', 'Test-Driven Development', 'Multi-platform synergy', 'bipartisan commission', 'getting better with age'],
+/*   |   */ ['pilgrim', 'frozen yogurt', '001010101001', '110101010110', 'integer overflow'],
+/*   v   */ ['', 'free parking validation', 'Android Netrunner', 'film festival', 'protest anthem'],
+/*  good */ ['petunia', 'generation Z', 'infected', 'librarian', 'a fixed-gear with full suspension']
+//         introverted ------> extroverted
+// TODO these need to be more balanced to the "scale".....
+];
+```
+// 4 questions. 2 social, 2 moral
+My first question is:
+There are two trolleys. One is on track to collide with five innocent people, but the other one spews toxic gas, slowly killing thousands via air pollution. Which one do you take to work?
+* Manslaughter Express
+    ~ virtue -= 2;
+* Complicity Caboose
+    ~ virtue -= 1;
+* (cheeky) I own the railroad company.
+    "Evades hypothetical questions." Check.
+- Next question. What is your favorite color?
+* Chartreuse
+    Excellent choice.
+    ~ charm += 1;
+* Mauve
+    Really? Hmm.
+    ~ charm -= 1;
+* (wordy) Synaesthesia
+    Well I guess that counts.
+- Next question. Do you think you're more likely to compliment a stranger, or call one out?
+* Compliment
+    ~ charm += 1;
+* Call-out
+    ~ charm -= 1;
+- Okay, one more left.
+Would you rather be adoptable, or adaptable?
+* Adoptable
+    ~ virtue -= 1;
+* Adaptable
+    ~ virtue -= 2;
+* (uncultured) Is that supposed to be from something?
+    You've never seen the Jimmy-Timmy Power Hour? Good God.
+
+- ~ gender = gender_matrix[virtue][charm];
+Well, that's everything. Knowing all that about you, I'd have to guess that your gender is... {gender}.
+I'm right, aren't I?
+~ var randCharm = random.int(0, 4, [charm]);
+~ var randVirtue = random.int(0, 4, [virtue]);
+~ var randAlt = gender_matrix[randVirtue][randCharm];
+* Spot on
+    Ha! I've never met a {gender} before. Nice to meet you.
+* No way. I'm a {randAlt}.
+    ~ gender = randAlt;
+    Whoops. I'm so sorry!
+* It's actually none of your business.    
+    Oh. I'm sorry.
+    ~ gender = "none of your business";
+
+- (stop) Is this your stop? Well, a word of advice before you go:
+{if (wordy>0) "Focus more on street smarts than book smarts." else "A tine in time lets you dine with a shine."}
+And {if (cheeky>0) "be careful with that mouth of yours." else "keep it tight."}
+And above all, {if (uncultured>0) "watch a movie once in a while. You're not too cool for kids' cartoons." else "never let them change you."}
+
+* Continue -> apartment

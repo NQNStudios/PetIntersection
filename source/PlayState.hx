@@ -12,6 +12,10 @@ import flixel.addons.ui.FlxButtonPlus;
 import flixel.addons.text.FlxTypeText;
 import flixel.text.FlxText;
 import hank.Story;
+import haxe.Timer;
+import flixel.group.FlxGroup;
+import CreditsState;
+import flixel.system.FlxSound;
 
 class PlayState extends FlxState
 {
@@ -19,13 +23,20 @@ class PlayState extends FlxState
 	var _story:Story;
 	public var ingrid_sprite: FlxSprite;
 	var prefix = '';
+	public var background: FlxGroup;
+	public var foreground: FlxGroup;
+	var black_box: FlxSprite;
+	var thought_bubble: FlxSprite;
+	public var ape: FlxSprite;
+	public var crossApe: FlxSprite;
 
 	function revealText() {
 		if (_typeText != null) {
-			remove(_typeText);
+			foreground.remove(_typeText);
+			
 		}
 
-		var typeText = prefix;
+		var typeText = '';
 		while (true) {
 			var frame = _story.nextFrame();
 			switch (frame) {
@@ -35,25 +46,95 @@ class PlayState extends FlxState
 					break;
 			}
 		}
+		typeText = prefix + typeText;
+
 		_typeText = new FlxTypeText(15, 500, FlxG.width - 30, typeText, 16, true);
 		_typeText.delay = 0.01;
 		_typeText.setTypingVariation(0.75, true);
+		if (prefix == '') {
+			_typeText.x += 10;
+			_typeText.fieldWidth -= 40;
+			// black text for thought bubble
+			_typeText.color = 0x000000;
+			_typeText.sounds = [];
+		} else {
+			// white text for dialogue
+			_typeText.color = 0xFFFFFF;
+
+			switch (prefix) {
+				case "you: ":
+					switch (playerSprite) {
+						case "puppy":
+							_typeText.sounds = sounds['plPuppy'];
+						case "kitty":
+							_typeText.sounds = sounds['plKitty'];
+						case "kid":
+							_typeText.sounds = sounds['plKid'];
+					}
+				default:
+					_typeText.sounds = sounds[prefix];
+			}
+		}
 		
-		add(_typeText);
-		_typeText.start(onComplete);
+		foreground.add(_typeText);
+		_typeText.start(null, null, null, null, onComplete);
 	}
+	public var playerSprite: String;
+	var plSprites: Map<String, FlxSprite> = new Map();
+	public var brownstone: FlxSprite;
 	
+	public function showPlayerSprite() {
+		foreground.add(plSprites[playerSprite]);
+	}
+
+	var sounds: Map<String, Array<FlxSound>> = new Map();
+
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
 	override public function create():Void
 	{
+		black_box = new FlxSprite(0, 640-180);
+		black_box.makeGraphic(960, 180, 0x000000);
+		thought_bubble = new FlxSprite(0, 640-180);
+		thought_bubble.loadGraphic('assets/images/thoughtbubble.jpg');
 		ingrid_sprite = new FlxSprite(0, 0);
-		ingrid_sprite.loadGraphic('assets/images/ingrid.jpg', false);
+		ingrid_sprite.loadGraphic('assets/images/ingrid.jpg');
+		brownstone = new FlxSprite(0, 0);
+		brownstone.loadGraphic('assets/images/brownstone.jpg');
+		brownstone.setGraphicSize(FlxG.width, FlxG.height);
+		ape = new FlxSprite(450, 40);
+		ape.loadGraphic('assets/images/the-ape.jpg');
+		crossApe = new FlxSprite(450, 40);
+		crossApe.loadGraphic('assets/images/cross-ape.jpg');
 
-		_story = new Story();
+		plSprites['kid'] = new FlxSprite(20, 20);
+		plSprites['kitty'] = new FlxSprite(20, 20);
+		plSprites['puppy'] = new FlxSprite(20, 20);
+		plSprites['kid'].loadGraphic('assets/images/plKid.jpg');
+		plSprites['kitty'].loadGraphic('assets/images/plKitten.jpg');
+		plSprites['puppy'].loadGraphic('assets/images/plPuppy.jpg');
+
+		// Load sounds
+		sounds['plKid'] = [];
+		sounds['plKitty'] = [];
+		sounds['plPuppy'] = [];
+		sounds['Ingrid: '] = [];
+		sounds['Roomie: '] = [];
+		sounds['Old dog: '] = [];
+
+#if debug
+		_story = new Story(null, true);// Set the debug flag for the script skips
+#else
+		_story = new Story(null, false);
+#end
 		_story.loadScript("assets/scripts/main.hank");
 		_story.addVariable("state", this);
+
+		background = new FlxGroup();
+		foreground = new FlxGroup();
+		add(background);
+		add(foreground);
 		
 		revealText();
 		
@@ -68,7 +149,8 @@ class PlayState extends FlxState
 			case HasChoices(choices):
 				addChoiceButtons(choices);
 			default:
-				add(new FlxText(0, 0, 'fuuuuuuck you'));
+				// reached the end of the story
+				FlxG.switchState(new CreditsState());
 		}
 	}
 
@@ -81,7 +163,7 @@ class PlayState extends FlxState
 		trace('adding choice buttons when there are ${choiceButtons.length}');
 		for (choice in choices) {
 			choiceButtons.push(new FlxButtonPlus(0, y, onButtonChosen(i, callbacksMade++), choice, 300, 20));
-			add(choiceButtons[i]);
+			foreground.add(choiceButtons[i]);
 			i++;
 			y += 20;
 		}
@@ -90,21 +172,23 @@ class PlayState extends FlxState
 	function clearChoiceButtons() {
 		trace('clearing choice buttons');
 		for (button in choiceButtons) {
-			remove(button);
+			foreground.remove(button);
 		}
 		choiceButtons = [];
 	}
 
 	function onButtonChosen(idx: Int, id: Int) {
-		trace('generating callback #${id} for button ${idx}');
+		// trace('generating callback #${id} for button ${idx}');
 		return function() {
 			if (id < callbacksUsed) return; // This avoids the inexplicable multiple choices bug
-			trace('calling callback #${id}');
+			// trace('calling callback #${id}');
 			switch (_story.nextFrame())  {
 				case HasChoices(choices):
 					callbacksUsed += choices.length;
-					trace('calling choose(${idx}) between ${choices}');
-					_story.choose(idx); clearChoiceButtons(); revealText();
+					// trace('calling choose(${idx}) between ${choices}');
+					_story.choose(idx);
+					clearChoiceButtons();
+					revealText();
 				default:
 					// It's accidentally firing the button chosen event twice, which will cause a crash
 			}
@@ -113,12 +197,22 @@ class PlayState extends FlxState
 	}
 
 	public function dialogue(name: String) {
-		prefix = '${name}: ';
+		if (name == 'thoughtbubble') {
+			prefix = '';
+			// remove black box, add thought bubble 
+			trace('thought bubble add');
+			foreground.remove(black_box);
+			foreground.add(thought_bubble);
+		}
+		else {
+			foreground.remove(thought_bubble);
+			foreground.add(black_box);
+			trace('black box add for ${name}');
+			prefix = '${name}: ';
 
-		// TODO add (and remove the old one) a black box along the bottom at 0, 500, FlxG.width, 140
-
-		// TODO assign its sounds based on who's talking
-		// _typeText.sounds = [ FlxG.sound.load(FlxAssets.getSound("assets/type01")), FlxG.sound.load(FlxAssets.getSound("assets/type02")) ];
+		}
 
 	}
 }
+
+			// _typeText.sounds = [ FlxG.sound.load(FlxAssets.getSound("assets/type01")), FlxG.sound.load(FlxAssets.getSound("assets/type02")) ];

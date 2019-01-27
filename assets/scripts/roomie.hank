@@ -1,0 +1,22 @@
+== roomie
+// TODO meet roommate
+// TODO remove previous background
+~ state.foreground.add(state.ape);
+~ state.dialogue("Roomie");
+My name's Roomie. Nice to meet you!
+How was your day today?
+~ state.dialogue("thoughtbubble");
+He's pretty flamboyant. He seems like he gets it. Maybe I'll take this chance to open up to a new friend!
+* Talk about your date
+- ~ state.dialogue("you");
+So I went on a date with someone I met online, and when I met her, I realized she has no idea I was {gender}.
+It got really awkward after that.
+* ...
+- ~ state.dialogue("Roomie");
+~ state.foreground.remove(state.ape);
+~ state.foreground.add(state.crossApe);
+Let me stop you there. I'm actually Christian. I'm not gonna say that I hate you, but I really don't think you should be pretending to be {gender}. I used to dress up as {gender} but then I realized God is happier when I don't. I've been reading the bible.
+* Oh. Umm...
+- ~ state.dialogue("thoughtbubble");
+That was the most awkward and terrible interaction of my entire life.
+

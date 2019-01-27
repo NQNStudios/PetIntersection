@@ -1,0 +1,12 @@
+- (apartment)
+~ state.background.clear();
+~ state.background.add(state.brownstone);
+
+~ state.dialogue("thoughtbubble");
+So, this is the building where I'm supposed to be moving in. I can't BELIEVE I found a place this nice for just $450/month!
+
+* Move in
+- Admittedly, it's tiny, 
+
+* Continue
+-> first_date
