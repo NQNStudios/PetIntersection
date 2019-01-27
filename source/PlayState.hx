@@ -73,12 +73,14 @@ class PlayState extends FlxState
 	}
 
 	var choiceButtons: Array<FlxButtonPlus> = [];
+	var callbacksMade = 0;
+	var callbacksUsed = 0;
 	function addChoiceButtons(choices: Array<String>) {
 		var i = 0;
 		var y = 580;
 		trace('adding choice buttons when there are ${choiceButtons.length}');
 		for (choice in choices) {
-			choiceButtons.push(new FlxButtonPlus(0, y, onButtonChosen(i), choice, 300, 20));
+			choiceButtons.push(new FlxButtonPlus(0, y, onButtonChosen(i, callbacksMade++), choice, 300, 20));
 			add(choiceButtons[i]);
 			i++;
 			y += 20;
@@ -86,17 +88,21 @@ class PlayState extends FlxState
 	}
 
 	function clearChoiceButtons() {
+		trace('clearing choice buttons');
 		for (button in choiceButtons) {
 			remove(button);
 		}
 		choiceButtons = [];
 	}
 
-	function onButtonChosen(idx: Int) {
-		trace('generating a callback for button ${idx}');
+	function onButtonChosen(idx: Int, id: Int) {
+		trace('generating callback #${id} for button ${idx}');
 		return function() {
-			switch (_story.nextFrame()) {
+			if (id < callbacksUsed) return; // This avoids the inexplicable multiple choices bug
+			trace('calling callback #${id}');
+			switch (_story.nextFrame())  {
 				case HasChoices(choices):
+					callbacksUsed += choices.length;
 					trace('calling choose(${idx}) between ${choices}');
 					_story.choose(idx); clearChoiceButtons(); revealText();
 				default:
