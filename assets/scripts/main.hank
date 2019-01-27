@@ -91,10 +91,16 @@ I'm right, aren't I?
 And {if (cheeky>0) "be careful with that mouth of yours." else "keep it tight."}
 And above all, {if (uncultured>0) "watch a movie once in a while. You're not too cool for kids' cartoons." else "never let them change you."}
 
-// TODO unit-test that choice labels are initialized to false, and function as view counts.
 
 // TODO apartment move-in scene
-// TODO first date -- she didn't know I was {gender} and it turned out kind of awkward.
+// TODO first date -- she didn't know I was {gender} and it turned out kind of
+// awkward.
+// TODO stressed out about the mess in the apartment where I haven't met anyone
+// yet (when the fuck do they sleep?) we pass a couple of humans, one of them
+// saying "my cat is so good with the litterbox he found it even when he was
+// all drugged up from surgery and had a cone on his head."
+// i wish my ROOMMATES were that good with the litterbox.
+//
 // TODO meet roommate
 // ~ state.dialogue("thoughtbubble");
 He seems like he gets it. Maybe I'll take this chance to open up to a new friend!
@@ -102,7 +108,13 @@ He seems like he gets it. Maybe I'll take this chance to open up to a new friend
 It's just pretty disrespectful that everyone makes assumptions about me. I'm actually Christian. I'm not gonna say that I hate you, but I really don't think you should be doing that. I used to dress up as {gender} but then I realized God is happier when I don't do that.
 
 // TODO find a cool green lamp on the street
-// TODO walk a dog and talk mental health 
+// TODO move into b44
+~ state.dialogue("thoughtbubble");
+My parents warned me when I moved into this apartment that I'd be in a bad neighborhood. That didn't make sense to me. The building was so nice!
+The thing I realized is that the businesshumans who made the building didn't really understand the concept of home. And they didn't care that their big expensive building for rich people was going up right next to the dog park.
+It gets so sad walking these streets to get to my luxury apartment and seeing old, stray dogs everywhere. Shouldn't this building be for them? There are literally dozens of empty beds inside.
+// TODO walk a dog and talk mental health
+~ state.dialogue("");
 ~ state.dialogue("player");
 Just because you feel crummy right now doesn't mean you lived every day this week making the wrong decisions! At least some of those choices were the right ones. Sometimes days are just bad and it's not our fault. I promise.
 // TODO the lamp breaks
