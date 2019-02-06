@@ -1,9 +1,193 @@
-INCLUDE train.hank
-INCLUDE apartment.hank // TODO
-INCLUDE date.hank // TODO 
-INCLUDE roomie.hank // TODO 
-INCLUDE lamp.hank // TODO 
-INCLUDE olddog.hank // TODO
+-> train
+== train
 
+~var gender = ""
+~ state.playerSprite = "kid";
+
+~ state.background.add(state.ingrid_sprite);
+~ state.dialogue("Ingrid"); // Ingrid is an anthropomorphic goat grandma
+Oh my, another youngster on your way to the city!
+// TODO show the train background and Ingrid
+I see a lot of kids on this train nowadays.
+* {DEBUG} SKIP TO BROWNSTONE
+    ~ gender = "insert gender here";
+    -> apartment
+* Glad I'm not the only one.
+* (misspeciated) I'm not a kid.
+    Oh, right. Little ones, I mean. I can see you're not a kid, you're a growing young...
+    ** Pup[].
+        ~ state.playerSprite = "puppy";
+    ** Kitten[].
+        ~ state.playerSprite = "kitty";
+- ~ state.showPlayerSprite();
+```
+if (DEBUG) {
+    ,,,
+    * SKIP TO APARTMENT -> apartment
+    * don't skip
+        - 
+    ,,,
+}
+```
+Younger every year--and never as prepared as they should be! This city can eat a {state.playerSprite} alive; I've seen it happen.
+You know, {if (misspeciated > 0) "I'm more hip to youth culture than I look" else "I learn a lot by sitting next to kids like you"}. For instance, I know you can't tell a {state.playerSprite}'s gender just by looking anymore.
+I bet if you answer a few questions for me, I can guess yours!
+* Um, sure.
+* What? That's none of your business.
+    So it's "none of your business"? Way to spoil the fun.
+    ~ gender = "none of your business";
+    -> stop
+    
+-    
+```
+var charm = 2;
+var virtue = 4;
+// Gender ideas: one-word answers, nonverbal communication, untranslateable
+var gender_matrix = [
+/*  evil */ ['goth', 'double helix', 'a social construct', 'Spike Jonze fan', 'spiders'],
+/*   |   */ ['Elizabethan actor', 'Test-Driven Development', 'Multi-platform synergy', 'bipartisan commission', 'getting better with age'],
+/*   |   */ ['pilgrim', 'frozen yogurt', '001010101001', '110101010110', 'integer overflow'],
+/*   v   */ ['A dark forest', 'free parking validation', 'Android Netrunner', 'film festival', 'protest anthem'],
+/*  good */ ['petunia', 'generation Z', 'infected', 'librarian', 'a fixed-gear with full suspension']
+//         introverted ------> extroverted
+// TODO these need to be more balanced to the "scale".....
+];
+```
+// 4 questions. 2 social, 2 moral
+My first question is:
+There are two trolleys. One is on track to collide with five innocent people, but the other one spews toxic gas, slowly killing thousands via air pollution. Which one do you take to work?
+* Manslaughter Express
+    ~ virtue -= 2;
+* Complicity Caboose
+    ~ virtue -= 1;
+* (cheeky) I own the railroad company.
+    "Evades hypothetical questions." Check.
+- Next question. What is your favorite color?
+* Chartreuse
+    Excellent choice.
+    ~ charm += 1;
+* Mauve
+    Really? Hmm.
+    ~ charm -= 1;
+* (wordy) Synaesthesia
+    Well I guess that counts.
+- Next question. Do you think you're more likely to compliment a stranger, or call one out?
+* Compliment
+    ~ charm += 1;
+* Call-out
+    ~ charm -= 1;
+- Okay, one more left.
+Would you rather be adoptable, or adaptable?
+* Adoptable
+    ~ virtue -= 1;
+* Adaptable
+    ~ virtue -= 2;
+* (uncultured) Is that supposed to be from something?
+    You've never seen the Jimmy-Timmy Power Hour? Good God.
+
+- ~ gender = gender_matrix[virtue][charm];
+Well, that's everything. Knowing all that about you, I'd have to guess that your gender is... {gender}.
+I'm right, aren't I?
+~ var randCharm = random.int(0, 4, [charm]);
+~ var randVirtue = random.int(0, 4, [virtue]);
+~ var randAlt = gender_matrix[randVirtue][randCharm];
+* Spot on
+    Ha! I've never met a {gender} before. Nice to meet you.
+* No way. I'm a {randAlt}.
+    ~ gender = randAlt;
+    Whoops. I'm so sorry!
+* It's actually none of your business.    
+    Oh. I'm sorry.
+    ~ gender = "none of your business";
+
+- (stop) Is this your stop? Well, a word of advice before you go:
+{if (wordy>0) "Focus more on street smarts than book smarts." else "A tine in time lets you dine with a shine."}
+And {if (cheeky>0) "be careful with that mouth of yours." else "keep it tight."}
+And above all, {if (uncultured>0) "watch a movie once in a while. You're not too cool for kids' cartoons." else "never let them change you."}
+
+* Continue -> apartment
+
+== apartment
+~ state.background.clear();
+~ state.background.add(state.brownstone);
+
+~ state.dialogue("thoughtbubble");
+So, this is the building where I'm supposed to be moving in. I can't BELIEVE I found a place this nice for just $450/month!
+
+* Move in
+- Admittedly, it's tiny and messy and the worst.
+
+* Continue
+-> first_date
+
+== first_date
+
+Text
+// TODO first date -- she didn't know I was {gender} and it turned out kind of
+// awkward.
+// TODO stressed out about the mess in the apartment where I haven't met anyone
+// yet (when the fuck do they sleep?) we pass a couple of humans, one of them
+// saying "my cat is so good with the litterbox he found it even when he was
+// all drugged up from surgery and had a cone on his head."
+// i wish my ROOMMATES were that good with the litterbox.
+//
+
+* Continue
+-> roomie
+
+
+== roomie
+// TODO meet roommate
+// TODO remove previous background
+~ state.foreground.add(state.ape);
+~ state.dialogue("Roomie");
+My name's Roomie. Nice to meet you!
+How was your day today?
+~ state.dialogue("thoughtbubble");
+He's pretty flamboyant. He seems like he gets it. Maybe I'll take this chance to open up to a new friend!
+* Talk about your date
+- ~ state.dialogue("you");
+So I went on a date with someone I met online, and when I met her, I realized she has no idea I was {gender}.
+It got really awkward after that.
+* ...
+- ~ state.dialogue("Roomie");
+~ state.foreground.remove(state.ape);
+~ state.foreground.add(state.crossApe);
+Let me stop you there. I'm actually Christian. I'm not gonna say that I hate you, but I really don't think you should be pretending to be {gender}. I used to dress up as {gender} but then I realized God is happier when I don't. I've been reading the Bible lately.
+* Oh. Umm...
+- ~ state.dialogue("thoughtbubble");
+That was the most awkward and terrible interaction of my entire life.
+
+* Continue
+->lamp
+
+== lamp
+
+// TODO find a cool green lamp on the street
 // TODO the lamp breaks
 
+* Continue
+-> olddog
+
+== olddog
+
+// TODO move into b44
+~ state.dialogue("thoughtbubble");
+My parents warned me when I moved into this apartment that I'd be in a bad neighborhood. That didn't make sense to me. The building was so nice!
+The thing I realized is that the businesshumans who made the building didn't really understand the concept of home. And they didn't care that their big expensive building for rich people was going up right next to the dog park.
+It gets so sad walking these streets to get to my luxury apartment and seeing old, stray dogs everywhere. Shouldn't this building be for them? There are literally dozens of empty beds inside.
+// TODO walk a dog and talk mental health
+~ state.dialogue("");
+~ state.dialogue("you");
+Just because you feel crummy right now doesn't mean you lived every day this week making the wrong decisions! At least some of those choices were the right ones. Sometimes days are just bad and it's not our fault. I promise.
+
+// TODO it's broken later
+// TODO friends back home went drinking without me. When is this city gonna feel right?
+
+~ state.dialogue("thoughtbubble");
+This city's going to eat me alive.
+
+// The end
+THE END
+* Credits
+- 

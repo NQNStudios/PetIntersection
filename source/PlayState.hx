@@ -56,29 +56,39 @@ class PlayState extends FlxState
 			_typeText.fieldWidth -= 40;
 			// black text for thought bubble
 			_typeText.color = 0x000000;
-			_typeText.sounds = [];
+			playerVoiceSounds();
 		} else {
 			// white text for dialogue
 			_typeText.color = 0xFFFFFF;
 
 			switch (prefix) {
 				case "you: ":
-					switch (playerSprite) {
-						case "puppy":
-							_typeText.sounds = sounds['plPuppy'];
-						case "kitty":
-							_typeText.sounds = sounds['plKitty'];
-						case "kid":
-							_typeText.sounds = sounds['plKid'];
-					}
+					playerVoiceSounds();
 				default:
 					_typeText.sounds = sounds[prefix];
+					trace('${prefix}: ${_typeText.sounds}');
 			}
 		}
 		
+			if (_typeText.sounds.length == 0) _typeText.sounds = null;
 		foreground.add(_typeText);
-		_typeText.start(null, null, null, null, onComplete);
+		_typeText.start(null, false, false, null, onComplete);
 	}
+
+	function playerVoiceSounds() {
+		switch (playerSprite) {
+				case "puppy":
+					_typeText.sounds = sounds['plPuppy'];
+				case "kitty":
+					_typeText.sounds = sounds['plKitty'];
+				case "kid":
+					_typeText.sounds = sounds['plKid'];
+			}
+			if (_typeText.sounds.length == 0) _typeText.sounds = null;
+		trace('SOUNDS');
+			trace(_typeText.sounds);
+	}
+
 	public var playerSprite: String;
 	var plSprites: Map<String, FlxSprite> = new Map();
 	public var brownstone: FlxSprite;
@@ -116,12 +126,16 @@ class PlayState extends FlxState
 		plSprites['puppy'].loadGraphic('assets/images/plPuppy.jpg');
 
 		// Load sounds
-		sounds['plKid'] = [];
-		sounds['plKitty'] = [];
-		sounds['plPuppy'] = [];
-		sounds['Ingrid: '] = [];
-		sounds['Roomie: '] = [];
-		sounds['Old dog: '] = [];
+		var ext='.wav';
+		sounds['plKid'] = [ for (name in []) FlxG.sound.load('assets/audio/${name}${ext}') ];
+		sounds['plKitty'] = [ for (name in []) FlxG.sound.load('assets/audio/${name}${ext}') ];
+		trace(sounds['plKitty']);
+		sounds['plPuppy'] = [ for (name in []) FlxG.sound.load('assets/audio/${name}${ext}') ];
+		sounds['Ingrid: '] = [ for (name in ['ingrid1']) FlxG.sound.load('assets/audio/${name}${ext}') ];
+		trace(sounds['Ingrid: '][0]);
+		sounds['Ingrid: '][0].play();
+		sounds['Roomie: '] = [ for (name in []) FlxG.sound.load('assets/audio/${name}${ext}') ];
+		sounds['Old dog: '] = [ for (name in []) FlxG.sound.load('assets/audio/${name}${ext}') ];
 
 #if debug
 		_story = new Story(null, true);// Set the debug flag for the script skips
