@@ -15,6 +15,7 @@ import hank.Story;
 import haxe.Timer;
 import flixel.group.FlxGroup;
 import CreditsState;
+import Placeholder.Unsplash;
 import flixel.system.FlxSound;
 
 class PlayState extends FlxState
@@ -104,12 +105,14 @@ class PlayState extends FlxState
 	 */
 	override public function create():Void
 	{
+
 		black_box = new FlxSprite(0, 640-180);
 		black_box.makeGraphic(960, 180, 0x000000);
 		thought_bubble = new FlxSprite(0, 640-180);
 		thought_bubble.loadGraphic('assets/images/thoughtbubble.jpg');
-		ingrid_sprite = new FlxSprite(0, 0);
-		ingrid_sprite.loadGraphic('assets/images/ingrid.jpg');
+		trace('what up');
+		ingrid_sprite = new Unsplash(Sys.environment().get('UNSPLASH_KEY')).sprite('goat', 0, 0, 400, 300);
+		trace('what up');
 		brownstone = new FlxSprite(0, 0);
 		brownstone.loadGraphic('assets/images/brownstone.jpg');
 		brownstone.setGraphicSize(FlxG.width, FlxG.height);
