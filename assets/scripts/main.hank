@@ -42,7 +42,13 @@ I bet if you answer a few questions for me, I can guess yours!
 ```
 var charm = 2;
 var virtue = 4;
-// Gender ideas: one-word answers, nonverbal communication, untranslateable
+// Gender ideas: one-word answers, nonverbal communication, untranslateable,
+// irrelevant under capitalism, 
+
+// replace instances of {gender} with {gender()} that wraps the phrase in markup.
+// Markup should be modulated by charm and virtue (virtue = lightness/darkness,
+// charm = bounciness?)
+
 var gender_matrix = [
 /*  evil */ ['goth', 'double helix', 'a social construct', 'Spike Jonze fan', 'spiders'],
 /*   |   */ ['Elizabethan actor', 'Test-Driven Development', 'Multi-platform synergy', 'bipartisan commission', 'getting better with age'],
